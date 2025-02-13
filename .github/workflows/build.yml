@@ -125,19 +125,32 @@ jobs:
           PACKER_BINARY="$(which packer)"
           sudo PACKER_LOG=1 ${PACKER_BINARY} build -machine-readable boards/${{ matrix.boards }} | tee packer.log
 
+      - name: Extract built image name
+        id: extract_image
+        run: |
+          # Look for the machine-readable line that indicates the artifact name.
+          # This assumes a line like: "timestamp,artifact,0,id,output-ubuntu.img"
+          ARTIFACT_NAME=$(grep ',artifact,0,string,' packer.log | tail -1 | cut -d, -f5)
+          echo "Found artifact name: ${ARTIFACT_NAME}"
+          # Export the name so that later steps can access it.
+          echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
+
       # --- New steps to capture the built image ---
       - name: Prepare built image for artifact upload
         id: prepare_artifact
         run: |
+          # Use the extracted artifact name
+          ARTIFACT_NAME="${{ steps.extract_image.outputs.artifact_name }}"
           # Check if the expected built image exists
-          if [[ -f raspberry-pi-4.img ]]; then
+          if [[ -f "${ARTIFACT_NAME}" ]]; then
+            DATE=$(date +"%Y%m%d")
+            #FINAL_NAME="${ARTIFACT_NAME%.*}_${DATE}.${ARTIFACT_NAME##*.}"
             # Sanitize the board name (replace '/' and '.' with '-')
             SANITIZED=$(echo "${{ matrix.boards }}" | sed 's/[\/\.]/-/g' | sed 's/\-pkr\-hcl//g')
-            DATE=$(date +"%Y%m%d")
-            ARTIFACT_NAME="${SANITIZED}_${DATE}.img"
+            FINAL_NAME="${SANITIZED}_${DATE}.img"
             #TODO: Figure out how to dynamically get image name
-            mv raspberry-pi-4.img "$ARTIFACT_NAME"
-            echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+            mv "${ARTIFACT_NAME}" "${FINAL_NAME}"
+            echo "artifact_name=${FINAL_NAME}" >> $GITHUB_OUTPUT
           else
             echo "No built image found; skipping artifact upload." >&2
           fi
