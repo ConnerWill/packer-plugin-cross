@@ -2,12 +2,11 @@ name: Build Images and Upload to GitHub Releases
 
 on:
   push:
+    paths:
+      - '.github/workflows/**'
+      - 'boards/**'
     tags:
       - v*
-    branches:
-      - master
-      - development
-  pull_request:
   schedule:
     # once a week
     - cron: '0 0 * * 1'
