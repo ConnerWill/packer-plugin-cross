@@ -54,7 +54,7 @@ build {
 
   provisioner "shell" {
     inline = [
-      "pacman -Sy --noconfirm --needed ansible bat curl docker docker-compose git github-cli lsd neovim openssh rsync sudo zsh",
+      "pacman -Sy --noconfirm --needed ansible bat base base-devel curl docker docker-compose git github-cli glibc lsd neovim openssh openssl rsync sudo zsh",
       "curl -L -o /tmp/install-dotfiles.sh https://raw.githubusercontent.com/ConnerWill/dotfiles/refs/heads/main/.config/zsh/install-dotfiles.sh",
       "curl -L -o /etc/issue.net https://gist.githubusercontent.com/ConnerWill/46ec96bc5eb1bca8225e2aaadcde107d/raw/c34b34d1e7cf9c375289653a5a6339a60a3d9fd1/issue.net",
       "curl -L -o /etc/issue https://gist.githubusercontent.com/ConnerWill/15d28359e4338159affdd9de249f7786/raw/591681b4badf4d965b20973f6c18d29f5f4e87bb/issue-rainbow",
