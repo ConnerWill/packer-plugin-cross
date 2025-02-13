@@ -1,10 +1,11 @@
-name: Test CI
+name: Build Images
+
 on:
   push:
     tags:
       - v*
-    branches:
-      - master
+    # branches:
+    #   - master
   pull_request:
 
 concurrency:
@@ -60,26 +61,26 @@ jobs:
       matrix:
         boards:
           #- bananapi-r1/archlinuxarm.pkr.hcl
-          - beaglebone-black/angstrom.pkr.hcl
-          - beaglebone-black/archlinuxarm.pkr.hcl
-          - beaglebone-black/debian.pkr.hcl
-          - beaglebone-black/ubuntu.pkr.hcl
+          #- beaglebone-black/angstrom.pkr.hcl
+          #- beaglebone-black/archlinuxarm.pkr.hcl
+          #- beaglebone-black/debian.pkr.hcl
+          #- beaglebone-black/ubuntu.pkr.hcl
           #- jetson-nano/ubuntu.pkr.hcl
-          - odroid-u3/archlinuxarm.pkr.hcl
-          - odroid-xu4/archlinuxarm.pkr.hcl
-          - odroid-xu4/ubuntu.pkr.hcl
-          - parallella/archlinuxarm.pkr.hcl
-          - parallella/ubuntu.pkr.hcl
-          - raspberry-pi/archlinuxarm.pkr.hcl
-          - raspberry-pi/raspbian.pkr.hcl
-          - raspberry-pi/raspbian-resize.pkr.hcl
-          - raspberry-pi/raspios-lite-arm.pkr.hcl
-          - raspberry-pi-3/archlinuxarm.pkr.hcl
-          - raspberry-pi-3/raspios-lite-arm64.pkr.hcl
-          - raspberry-pi-4/ubuntu_server_20.04_arm64.pkr.hcl
+          #- odroid-u3/archlinuxarm.pkr.hcl
+          #- odroid-xu4/archlinuxarm.pkr.hcl
+          #- odroid-xu4/ubuntu.pkr.hcl
+          #- parallella/archlinuxarm.pkr.hcl
+          #- parallella/ubuntu.pkr.hcl
+          #- raspberry-pi/archlinuxarm.pkr.hcl
+          #- raspberry-pi/raspbian.pkr.hcl
+          #- raspberry-pi/raspbian-resize.pkr.hcl
+          #- raspberry-pi/raspios-lite-arm.pkr.hcl
+          #- raspberry-pi-3/archlinuxarm.pkr.hcl
+          #- raspberry-pi-3/raspios-lite-arm64.pkr.hcl
+          #- raspberry-pi-4/ubuntu_server_20.04_arm64.pkr.hcl
           - raspberry-pi-4/archlinuxarm.pkr.hcl
-          - rock-4b/debos-radxa.pkr.hcl
-          - wandboard/archlinuxarm.pkr.hcl
+          # - rock-4b/debos-radxa.pkr.hcl
+          # - wandboard/archlinuxarm.pkr.hcl
     name: Build ${{ matrix.boards }} image
     runs-on: ubuntu-24.04
     steps:
@@ -115,8 +116,31 @@ jobs:
 
       - name: Build image
         run: |
+          # Run the packer build. We assume that it outputs an image file named "output.img"
           PACKER_BINARY="$(which packer)"
           sudo PACKER_LOG=1 ${PACKER_BINARY} build boards/${{ matrix.boards }}
+
+      # --- New steps to capture the built image ---
+      - name: Prepare built image for artifact upload
+        id: prepare_artifact
+        run: |
+          # Check if the expected built image exists
+          if [ -f output.img ]; then
+            # Sanitize the board name (replace '/' and '.' with '-')
+            SANITIZED=$(echo "${{ matrix.boards }}" | sed 's/[\/\.]/-/g')
+            ARTIFACT_NAME="image-${SANITIZED}.img"
+            mv output.img "$ARTIFACT_NAME"
+            echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+          else
+            echo "No built image found; skipping artifact upload." >&2
+          fi
+
+      - name: Upload built image artifact
+        uses: actions/upload-artifact@v3
+        if: steps.prepare_artifact.outputs.artifact_name != ''
+        with:
+          name: ${{ steps.prepare_artifact.outputs.artifact_name }}
+          path: ${{ steps.prepare_artifact.outputs.artifact_name }}
 
   plugin-check:
     needs: compile
@@ -134,3 +158,51 @@ jobs:
       - name: check
         run: |
           make plugin-check
+
+  # --- New release job that creates/updates a GitHub Release and uploads the built images ---
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      # Download all artifacts (from all matrix runs)
+      - name: Download all built image artifacts
+        uses: actions/download-artifact@v3
+        with:
+          # If you leave 'name' empty, all artifacts will be downloaded.
+          # They are extracted into subdirectories named after the artifact.
+          # We'll search recursively for .img files.
+          path: downloaded-artifacts
+
+      # Install GitHub CLI (gh) for uploading assets
+      - name: Install GitHub CLI
+        run: |
+          # Add the GitHub CLI repository key and list file then install gh.
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+
+      - name: Create Release if needed
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Extract the tag name from the ref (remove "refs/tags/")
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          # Check if the release already exists; if not, create it.
+          if ! gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release create "$TAG_NAME" -t "Release $TAG_NAME" -n ""
+          fi
+
+      - name: Upload Release Assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the tag name (strip refs/tags/ from GITHUB_REF)
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          # Find all .img files under the downloaded-artifacts directory and upload them
+          for file in $(find downloaded-artifacts -type f -name '*.img'); do
+            echo "Uploading $file to release $TAG_NAME"
+            gh release upload "$TAG_NAME" "$file" --clobber
+          done
