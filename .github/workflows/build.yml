@@ -134,7 +134,7 @@ jobs:
             # Sanitize the board name (replace '/' and '.' with '-')
             SANITIZED=$(echo "${{ matrix.boards }}" | sed 's/[\/\.]/-/g')
             ARTIFACT_NAME="image-${SANITIZED}.img"
-            mv output.img "$ARTIFACT_NAME"
+            mv raspberry-pi-4.img "$ARTIFACT_NAME"
             echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
           else
             echo "No built image found; skipping artifact upload." >&2
