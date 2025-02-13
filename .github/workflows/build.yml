@@ -7,6 +7,9 @@ on:
       - 'boards/**'
     tags:
       - v*
+    branches:
+      - master
+      - development
   schedule:
     # once a week
     - cron: '0 0 * * 1'
