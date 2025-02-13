@@ -1,0 +1,136 @@
+name: Test CI
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - master
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compile:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Retrieve cache
+        id: cache-key
+        uses: actions/cache@v4
+        with:
+          path: packer-plugin-cross
+          key: key-${{ github.sha }}-1
+
+      - name: Checkout
+        if: steps.cache-key.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        if: steps.cache-key.outputs.cache-hit != 'true'
+        uses: actions/setup-go@v5.3.0
+        with:
+          go-version: '1.23'
+        id: go
+
+      - name: Get dependencies
+        if: steps.cache-key.outputs.cache-hit != 'true'
+        run: |
+          go get -v -t -d ./...
+          if [ -f Gopkg.toml ]; then
+              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+              dep ensure
+          fi
+
+      - name: Build
+        if: steps.cache-key.outputs.cache-hit != 'true'
+        run: go build -v .
+
+      - name: Cache binary
+        if: steps.cache-key.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
+        with:
+          path: packer-plugin-cross
+          key: key-${{ github.sha }}-1
+
+  test:
+    needs: compile
+    strategy:
+      fail-fast: false
+      matrix:
+        boards:
+          #- bananapi-r1/archlinuxarm.pkr.hcl
+          - beaglebone-black/angstrom.pkr.hcl
+          - beaglebone-black/archlinuxarm.pkr.hcl
+          - beaglebone-black/debian.pkr.hcl
+          - beaglebone-black/ubuntu.pkr.hcl
+          #- jetson-nano/ubuntu.pkr.hcl
+          - odroid-u3/archlinuxarm.pkr.hcl
+          - odroid-xu4/archlinuxarm.pkr.hcl
+          - odroid-xu4/ubuntu.pkr.hcl
+          - parallella/archlinuxarm.pkr.hcl
+          - parallella/ubuntu.pkr.hcl
+          - raspberry-pi/archlinuxarm.pkr.hcl
+          - raspberry-pi/raspbian.pkr.hcl
+          - raspberry-pi/raspbian-resize.pkr.hcl
+          - raspberry-pi/raspios-lite-arm.pkr.hcl
+          - raspberry-pi-3/archlinuxarm.pkr.hcl
+          - raspberry-pi-3/raspios-lite-arm64.pkr.hcl
+          - raspberry-pi-4/ubuntu_server_20.04_arm64.pkr.hcl
+          - raspberry-pi-4/archlinuxarm.pkr.hcl
+          - rock-4b/debos-radxa.pkr.hcl
+          - wandboard/archlinuxarm.pkr.hcl
+    name: Build ${{ matrix.boards }} image
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch additional packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install fdisk gdisk qemu-user-static libarchive-tools tar qemu-utils
+
+      - name: Install Packer
+        uses: hashicorp-contrib/setup-packer@v3
+        with:
+          packer-version: 1.11.0
+
+      - name: Retrieve cache
+        uses: actions/cache@v4
+        with:
+          path: packer-plugin-cross
+          key: key-${{ github.sha }}-1
+
+      - name: Bring plugin in place
+        run: |
+          packer plugins install -path ./packer-plugin-cross "github.com/michalfita/cross"
+
+      - name: Install packer plugins
+        if: ${{ endsWith(matrix.boards, '.hcl') }}
+        run: PACKER_LOG=1 packer init boards/${{ matrix.boards }}
+
+      - name: Validate
+        run: PACKER_LOG=1 packer validate boards/${{ matrix.boards }}
+
+      - name: Build image
+        run: |
+          PACKER_BINARY="$(which packer)"
+          sudo PACKER_LOG=1 ${PACKER_BINARY} build boards/${{ matrix.boards }}
+
+  plugin-check:
+    needs: compile
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5.3.0
+        with:
+          go-version: '1.23'
+      - name: Retrieve cache
+        uses: actions/cache@v4
+        with:
+          path: packer-plugin-cross
+          key: key-${{ github.sha }}-1
+      - name: check
+        run: |
+          make plugin-check
