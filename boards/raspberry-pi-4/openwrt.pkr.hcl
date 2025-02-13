@@ -48,7 +48,7 @@ build {
       "echo 'nameserver 8.8.8.8' > /etc/resolv.conf",
       "/etc/init.d/dnsmasq restart",
       "opkg update",
-      "opkg install --force-install bash",
+      "opkg install bash",
       "mv -f /etc/resolv.conf.bk /etc/resolv.conf"
     ]
   }
