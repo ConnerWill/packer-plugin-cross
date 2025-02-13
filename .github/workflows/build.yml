@@ -123,7 +123,7 @@ jobs:
         run: |
           # Run the packer build. We assume that it outputs an image file named "output.img"
           PACKER_BINARY="$(which packer)"
-          sudo PACKER_LOG=1 ${PACKER_BINARY} build boards/${{ matrix.boards }}
+          sudo PACKER_LOG=1 ${PACKER_BINARY} build -machine-readable boards/${{ matrix.boards }} | tee packer.log
 
       # --- New steps to capture the built image ---
       - name: Prepare built image for artifact upload
