@@ -8,9 +8,9 @@ on:
       - master
       - development
   pull_request:
-  # schedule:
-  #   # once a week
-  #   - cron: '0 0 * * 1'
+  schedule:
+    # once a week
+    - cron: '0 0 * * 1'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -141,7 +141,7 @@ jobs:
           fi
 
       - name: Upload built image artifact
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v4
         if: steps.prepare_artifact.outputs.artifact_name != ''
         with:
           name: ${{ steps.prepare_artifact.outputs.artifact_name }}
@@ -171,7 +171,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Download all built image artifacts
-        uses: actions/download-artifact@v3.1.2
+        uses: actions/download-artifact@v4
         with:
           path: downloaded-artifacts
 
@@ -183,3 +183,4 @@ jobs:
             downloaded-artifacts/**/*.img
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
