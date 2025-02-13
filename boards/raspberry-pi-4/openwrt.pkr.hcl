@@ -43,10 +43,10 @@ build {
 
   provisioner "shell" {
     inline = [
+      "mkdir -p /var/lock/",
       "mv /etc/resolv.conf /etc/resolv.conf.bk",
       "echo 'nameserver 8.8.8.8' > /etc/resolv.conf",
       "/etc/init.d/dnsmasq restart",
-      "mkdir -p /var/lock/",
       "opkg update",
       "opkg install --force-install bash",
       "mv -f /etc/resolv.conf.bk /etc/resolv.conf"
