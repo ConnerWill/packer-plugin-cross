@@ -130,7 +130,7 @@ jobs:
         run: |
           # Look for the machine-readable line that indicates the artifact name.
           # This assumes a line like: "timestamp,artifact,0,id,output-ubuntu.img"
-          ARTIFACT_NAME=$(grep ',artifact,0,file,0,' packer.log | tail -1 | cut -d, -f5)
+          ARTIFACT_NAME=$(grep ',artifact,0,file,0,' packer.log | tail -1 | cut -d, -f7)
           echo "Found artifact name: ${ARTIFACT_NAME}"
           # Export the name so that later steps can access it.
           echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
