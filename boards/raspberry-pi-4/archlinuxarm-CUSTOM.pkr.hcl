@@ -54,7 +54,21 @@ build {
 
   provisioner "shell" {
     inline = [
-      "",
+      "pacman -Sy --noconfirm --needed ansible bat curl docker docker-compose git github-cli lsd neovim openssh rsync sudo zsh",
+      "curl -L -o /tmp/install-dotfiles.sh https://raw.githubusercontent.com/ConnerWill/dotfiles/refs/heads/main/.config/zsh/install-dotfiles.sh",
+      "curl -L -o /etc/issue.net https://gist.githubusercontent.com/ConnerWill/46ec96bc5eb1bca8225e2aaadcde107d/raw/c34b34d1e7cf9c375289653a5a6339a60a3d9fd1/issue.net",
+      "curl -L -o /etc/issue https://gist.githubusercontent.com/ConnerWill/15d28359e4338159affdd9de249f7786/raw/591681b4badf4d965b20973f6c18d29f5f4e87bb/issue-rainbow",
+      "curl -L -o /etc/ssh/hardened-sshd_config https://gist.githubusercontent.com/ConnerWill/f5bffffbdd12a38fa9cc9b617dc3c25b/raw/f4c141d48a5d0fd79497ed19eb6ee328831b6c70/hardened-sshd_config",
+      "mkdir -p /home/alarm/.ssh",
+      "chown --recursive alarm:alarm /home/alarm/.ssh",
+      "chmod 700 /home/alarm/.ssh",
+      "echo '# ENTER_SSH_PUB_KEY_HERE' >> /home/alarm/.ssh/authorized_keys",
+      "echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC9MwWXoxIDai1BtOgbP6sBLUhgp+/yv3juZveWxuGiv work-laptop-key' >> /home/alarm/.ssh/authorized_keys",
+      "chown alarm:alarm /home/alarm/.ssh/authorized_keys",
+      "chmod 600 /home/alarm/.ssh/authorized_keys",
+      "systemctl enable sshd",
+      "if command -v zsh chsh >/dev/null 2>&1; then chsh --shell=$(command -v zsh) alarm; fi",
+      "mv -f /etc/resolv.conf.bk /etc/resolv.conf"
     ]
   }
 
@@ -66,5 +80,4 @@ build {
   provisioner "shell" {
     script = "scripts/bootstrap_resizerootfs.sh"
   }
-
 }
