@@ -80,7 +80,7 @@ jobs:
           # - raspberry-pi/raspbian.pkr.hcl
           # - raspberry-pi/raspbian-resize.pkr.hcl
           # - raspberry-pi/raspios-lite-arm.pkr.hcl
-          # - raspberry-pi-3/archlinuxarm.pkr.hcl
+          - raspberry-pi-3/archlinuxarm.pkr.hcl
           # - raspberry-pi-3/raspios-lite-arm64.pkr.hcl
           # - raspberry-pi-4/ubuntu_server_20.04_arm64.pkr.hcl
           - raspberry-pi-4/archlinuxarm.pkr.hcl
