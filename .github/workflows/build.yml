@@ -1,12 +1,16 @@
-name: Build Images
+name: Build Images and Upload to GitHub Releases
 
 on:
   push:
     tags:
       - v*
-    # branches:
-    #   - master
+    branches:
+      - master
+      - development
   pull_request:
+  schedule:
+    # once a week
+    - cron:  '0 0 * * 1'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
