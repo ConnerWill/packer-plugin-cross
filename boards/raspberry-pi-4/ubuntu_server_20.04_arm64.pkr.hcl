@@ -24,20 +24,20 @@ source "cross" "ubuntu" {
   image_size            = "3.1G"
   image_type            = "dos"
   image_partitions {
-    name         = "boot"
-    type         = "c"
-    start_sector = "2048"
     filesystem   = "fat"
-    size         = "256M"
     mountpoint   = "/boot/firmware"
+    name         = "boot"
+    size         = "256M"
+    start_sector = "2048"
+    type         = "c"
   }
   image_partitions {
-    name         = "root"
-    type         = "83"
-    start_sector = "526336"
     filesystem   = "ext4"
-    size         = "2.8G"
     mountpoint   = "/"
+    name         = "root"
+    size         = "2.8G"
+    start_sector = "526336"
+    type         = "83"
   }
   image_chroot_env             = ["PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"]
   qemu_binary_source_path      = "/usr/bin/qemu-aarch64-static"
