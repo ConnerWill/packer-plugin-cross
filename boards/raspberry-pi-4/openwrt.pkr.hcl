@@ -43,6 +43,7 @@ build {
 
   provisioner "shell" {
     inline = [
+      "mkdir -p /var/lock/",
       "opkg update",
       "opkg install --force-install bash"
     ]
