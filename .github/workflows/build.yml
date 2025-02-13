@@ -205,7 +205,7 @@ jobs:
 
       - name: Create GitHub Release (if needed)
         if: env.create_release == 'true'
-        run: gh release create ${{ env.release_tag }} --title "Release ${{ env.release_tag }}" --notes "Automated release for ${{ env.release_tag }}"
+        run: gh release create ${{ env.release_tag }} --title "${{ env.release_tag }}" --notes "Automated release for ${{ env.release_tag }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
