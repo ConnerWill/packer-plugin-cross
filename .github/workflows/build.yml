@@ -10,7 +10,7 @@ on:
   pull_request:
   schedule:
     # once a week
-    - cron:  '0 0 * * 1'
+    - cron: '0 0 * * 1'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -64,24 +64,25 @@ jobs:
       fail-fast: false
       matrix:
         boards:
-          #- bananapi-r1/archlinuxarm.pkr.hcl
-          #- beaglebone-black/angstrom.pkr.hcl
-          #- beaglebone-black/archlinuxarm.pkr.hcl
-          #- beaglebone-black/debian.pkr.hcl
-          #- beaglebone-black/ubuntu.pkr.hcl
-          #- jetson-nano/ubuntu.pkr.hcl
-          #- odroid-u3/archlinuxarm.pkr.hcl
-          #- odroid-xu4/archlinuxarm.pkr.hcl
-          #- odroid-xu4/ubuntu.pkr.hcl
-          #- parallella/archlinuxarm.pkr.hcl
-          #- parallella/ubuntu.pkr.hcl
-          #- raspberry-pi/archlinuxarm.pkr.hcl
-          #- raspberry-pi/raspbian.pkr.hcl
-          #- raspberry-pi/raspbian-resize.pkr.hcl
-          #- raspberry-pi/raspios-lite-arm.pkr.hcl
-          #- raspberry-pi-3/archlinuxarm.pkr.hcl
-          #- raspberry-pi-3/raspios-lite-arm64.pkr.hcl
-          #- raspberry-pi-4/ubuntu_server_20.04_arm64.pkr.hcl
+          # Uncomment boards as needed:
+          # - bananapi-r1/archlinuxarm.pkr.hcl
+          # - beaglebone-black/angstrom.pkr.hcl
+          # - beaglebone-black/archlinuxarm.pkr.hcl
+          # - beaglebone-black/debian.pkr.hcl
+          # - beaglebone-black/ubuntu.pkr.hcl
+          # - jetson-nano/ubuntu.pkr.hcl
+          # - odroid-u3/archlinuxarm.pkr.hcl
+          # - odroid-xu4/archlinuxarm.pkr.hcl
+          # - odroid-xu4/ubuntu.pkr.hcl
+          # - parallella/archlinuxarm.pkr.hcl
+          # - parallella/ubuntu.pkr.hcl
+          # - raspberry-pi/archlinuxarm.pkr.hcl
+          # - raspberry-pi/raspbian.pkr.hcl
+          # - raspberry-pi/raspbian-resize.pkr.hcl
+          # - raspberry-pi/raspios-lite-arm.pkr.hcl
+          # - raspberry-pi-3/archlinuxarm.pkr.hcl
+          # - raspberry-pi-3/raspios-lite-arm64.pkr.hcl
+          # - raspberry-pi-4/ubuntu_server_20.04_arm64.pkr.hcl
           - raspberry-pi-4/archlinuxarm.pkr.hcl
           # - rock-4b/debos-radxa.pkr.hcl
           # - wandboard/archlinuxarm.pkr.hcl
@@ -140,7 +141,7 @@ jobs:
           fi
 
       - name: Upload built image artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.2
         if: steps.prepare_artifact.outputs.artifact_name != ''
         with:
           name: ${{ steps.prepare_artifact.outputs.artifact_name }}
@@ -171,7 +172,7 @@ jobs:
     steps:
       # Download all artifacts (from all matrix runs)
       - name: Download all built image artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.1.2
         with:
           # If you leave 'name' empty, all artifacts will be downloaded.
           # They are extracted into subdirectories named after the artifact.
