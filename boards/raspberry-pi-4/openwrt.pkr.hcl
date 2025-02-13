@@ -43,8 +43,8 @@ build {
 
   provisioner "shell" {
     inline = [
-      "mv /etc/resolv.conf /etc/resolv.conf.bk",
-      "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+      "opkg update",
+      "opkg install --force-install bash"
     ]
   }
 
