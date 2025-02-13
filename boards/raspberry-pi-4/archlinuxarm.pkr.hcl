@@ -47,7 +47,8 @@ build {
       "pacman-key --init",
       "pacman-key --populate archlinuxarm",
       "pacman -Sy --noconfirm --needed",
-      "pacman -S parted --noconfirm --needed"
+      "pacman -S parted --noconfirm --needed",
+      "sed -i 's/mmcblk0/mmcblk1/g' /etc/fstab"
     ]
   }
 
