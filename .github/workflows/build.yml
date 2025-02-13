@@ -183,6 +183,10 @@ jobs:
     needs: build
     runs-on: ubuntu-24.04
     steps:
+      - name: Checkout
+        if: steps.cache-key.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
+
       - name: Set Release Tag
         id: set_tag
         run: echo "release_tag=$(date +'%Y%m%d')" >> $GITHUB_ENV
