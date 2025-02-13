@@ -132,8 +132,9 @@ jobs:
           # Check if the expected built image exists
           if [[ -f raspberry-pi-4.img ]]; then
             # Sanitize the board name (replace '/' and '.' with '-')
-            SANITIZED=$(echo "${{ matrix.boards }}" | sed 's/[\/\.]/-/g')
-            ARTIFACT_NAME="image-${SANITIZED}.img"
+            SANITIZED=$(echo "${{ matrix.boards }}" | sed 's/[\/\.]/-/g' | sed 's/\-pkr\-hcl//g')
+            DATE=$(date +"%Y%m%d")
+            ARTIFACT_NAME="${SANITIZED}_${DATE}.img"
             #TODO: Figure out how to dynamically get image name
             mv raspberry-pi-4.img "$ARTIFACT_NAME"
             echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
