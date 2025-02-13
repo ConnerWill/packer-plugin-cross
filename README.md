@@ -3,6 +3,7 @@
 > \[!IMPORTANT\]
 > This is hard fork from [packer-builder-arm](https://github.com/mkaczanowski/packer-builder-arm) intended to break backward compatibility at some point to fix some problems and let easier support of other cross-platforms than ARM.
 
+[![Build Images and Upload to GitHub Releases][build-badge]][build]
 [![Build Status][github-badge]][github]
 [![GoDoc][godoc-badge]][godoc]
 [![GoReportCard][report-badge]][report]
@@ -43,7 +44,7 @@ Since the setup varies a lot for different hardware types, the example configura
 # Quick start
 
 ```
-git clone https://github.com/michalfita/packer-plugin-cross
+git clone https://github.com/ConnerWill/packer-plugin-cross
 cd packer-plugin-cross
 go mod download
 go build
@@ -65,19 +66,19 @@ The container is a multi-arch container (Linux/amd64 or Linux/arm64), that can b
 Pull the latest version of the container to ensure the next commands are not using an old cached version of the container:
 
 ```
-docker pull ghcr.io/michalfita/packer-plugin-cross:latest
+docker pull ghcr.io/ConnerWill/packer-plugin-cross:latest
 ```
 
 Build a board:
 
 ```
-docker run --rm --privileged -v /dev:/dev -v ${PWD}:/build ghcr.io/michalfita/packer-plugin-cross:latest build boards/raspberry-pi/raspbian.pkr.hcl
+docker run --rm --privileged -v /dev:/dev -v ${PWD}:/build ghcr.io/ConnerWill/packer-plugin-cross:latest build boards/raspberry-pi/raspbian.pkr.hcl
 ```
 
 Build a board with more system packages (e.g. `bmap-tools`, `zstd`) can be added via the parameter `-extra-system-packages=...`:
 
 ```
-docker run --rm --privileged -v /dev:/dev -v ${PWD}:/build ghcr.io/michalfita/packer-plugin-cross:latest build boards/raspberry-pi/raspbian.pkr.hcl -extra-system-packages=bmap-tools,zstd
+docker run --rm --privileged -v /dev:/dev -v ${PWD}:/build ghcr.io/ConnerWill/packer-plugin-cross:latest build boards/raspberry-pi/raspbian.pkr.hcl -extra-system-packages=bmap-tools,zstd
 ```
 
 > \[!TIP\]
@@ -258,7 +259,7 @@ With `artifice` plugin you can pass rootfs archive to docker plugins
     },
     {
         "type": "docker-import",
-        "repository": "michalfita/archlinuxarm",
+        "repository": "ConnerWill/archlinuxarm",
         "tag": "latest"
     }],
     ...
@@ -313,9 +314,11 @@ vagrant provision
 
 [![asciicast](https://asciinema.org/a/7ad1nm2Q7DRFVlHpqAknPolNo.svg)](https://asciinema.org/a/7ad1nm2Q7DRFVlHpqAknPolNo)
 
-[github]: https://github.com/michalfita/packer-plugin-cross/actions
-[github-badge]: https://img.shields.io/github/actions/workflow/status/michalfita/packer-plugin-cross/docker.yml?branch=master
-[godoc]: https://godoc.org/github.com/michalfita/packer-plugin-cross
-[godoc-badge]: https://godoc.org/github.com/michalfita/packer-plugin-cross?status.svg
-[report]: https://goreportcard.com/report/github.com/michalfita/packer-plugin-cross
-[report-badge]: https://goreportcard.com/badge/github.com/michalfita/packer-plugin-cross
+[github]: https://github.com/ConnerWill/packer-plugin-cross/actions
+[github-badge]: https://img.shields.io/github/actions/workflow/status/ConnerWill/packer-plugin-cross/docker.yml?branch=master
+[godoc]: https://godoc.org/github.com/ConnerWill/packer-plugin-cross
+[godoc-badge]: https://godoc.org/github.com/ConnerWill/packer-plugin-cross?status.svg
+[report]: https://goreportcard.com/report/github.com/ConnerWill/packer-plugin-cross
+[report-badge]: https://goreportcard.com/badge/github.com/ConnerWill/packer-plugin-cross
+[build-badge]: https://github.com/ConnerWill/packer-plugin-cross/actions/workflows/build.yml/badge.svg
+[build]: https://github.com/ConnerWill/packer-plugin-cross/actions/workflows/build.yml
