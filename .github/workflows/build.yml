@@ -129,12 +129,12 @@ jobs:
       - name: Prepare built image for artifact upload
         id: prepare_artifact
         run: |
+          ls -al
           # Check if the expected built image exists
-          if [ -f output.img ]; then
+          if [[ -f raspberry-pi-4.img ]]; then
             # Sanitize the board name (replace '/' and '.' with '-')
             SANITIZED=$(echo "${{ matrix.boards }}" | sed 's/[\/\.]/-/g')
             ARTIFACT_NAME="image-${SANITIZED}.img"
-            ls -al
             mv raspberry-pi-4.img "$ARTIFACT_NAME"
             echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
           else
