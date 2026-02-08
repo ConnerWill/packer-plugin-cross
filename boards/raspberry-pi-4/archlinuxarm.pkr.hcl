@@ -18,7 +18,7 @@ source "cross" "arch" {
     filesystem   = "vfat"
     mountpoint   = "/boot"
     name         = "boot"
-    size         = "512M"
+    size         = "256M"
     start_sector = "2048"
     type         = "c"
   }
@@ -27,10 +27,11 @@ source "cross" "arch" {
     mountpoint   = "/"
     name         = "root"
     size         = "0"
+    start_sector = "526336"
     type         = "83"
   }
   image_path                   = "raspberry-pi-4.img"
-  image_size                   = "2G"
+  image_size                   = "4G"
   image_type                   = "dos"
   qemu_binary_destination_path = "/usr/bin/qemu-aarch64-static"
   qemu_binary_source_path      = "/usr/bin/qemu-aarch64-static"
