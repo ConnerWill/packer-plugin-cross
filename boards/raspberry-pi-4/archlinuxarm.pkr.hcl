@@ -53,12 +53,17 @@ build {
   # }
 
   provisioner "file" {
-    destination = "/tmp"
+    destination = "/tmp/scripts/resizerootfs"
     source      = "scripts/resizerootfs"
   }
 
   provisioner "shell" {
-    script = "scripts/bootstrap_resizerootfs.sh"
+    script = "/tmp/scripts/resizerootfs"
   }
+
+  ## ORIG
+  # provisioner "shell" {
+  #   script = "scripts/bootstrap_resizerootfs.sh"
+  # }
 
 }
