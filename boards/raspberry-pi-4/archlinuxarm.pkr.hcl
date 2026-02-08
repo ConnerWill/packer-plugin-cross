@@ -42,7 +42,7 @@ build {
 
   #provisioner "shell" {
   #  inline = [
-  #    "if [[ -e /etc/resolv.conf ]]; then mv /etc/resolv.conf /etc/resolv.conf.bk ; echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+  #    "if [[ -e /etc/resolv.conf ]]; then mv /etc/resolv.conf /etc/resolv.conf.bk ; echo 'nameserver 8.8.8.8' > /etc/resolv.conf",
   #    "mv /etc/resolv.conf /etc/resolv.conf.bk",
   #    "echo 'nameserver 8.8.8.8' > /etc/resolv.conf",
   #    "pacman-key --init",
@@ -62,24 +62,23 @@ build {
 
   provisioner "shell" {
     inline = [
-      "echo '==== CONFIGURING RESOLV.CONF FILE ===='"
-      "if [[ -e /etc/resolv.conf ]]; then mv /etc/resolv.conf /etc/resolv.conf.bk ; echo 'nameserver 8.8.8.8' > /etc/resolv.conf; fi",
+      "echo '==== CONFIGURING RESOLV.CONF FILE ===='",
+      "if [[ -e /etc/resolv.conf ]]; then mv /etc/resolv.conf /etc/resolv.conf.bk ; echo 'nameserver 8.8.8.8' > /etc/resolv.conf; fi"
     ]
   }
 
   provisioner "shell" {
     inline = [
-      "echo '==== CONFIGURING PACMAN KEYS ===='"
+      "echo '==== CONFIGURING PACMAN KEYS ===='",
       "pacman-key --init",
       "pacman-key --populate archlinuxarm",
-      "pacman -Sy --disable-sandbox --noconfirm --needed parted ",
     ]
   }
 
   provisioner "shell" {
     inline = [
-      "echo '==== UPDATING PACMAN - INSTALL PARTED ===='"
-      "pacman -Sy --disable-sandbox --noconfirm --needed parted ",
+      "echo '==== UPDATING PACMAN - INSTALL PARTED ===='",
+      "pacman -Sy --disable-sandbox --noconfirm --needed parted"
     ]
   }
 
