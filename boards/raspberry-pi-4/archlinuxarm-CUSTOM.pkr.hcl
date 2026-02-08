@@ -27,7 +27,6 @@ source "cross" "arch" {
     mountpoint   = "/"
     name         = "root"
     size         = "0"
-    start_sector = "526336"
     type         = "83"
   }
   image_path                   = "raspberry-pi-4.img"
