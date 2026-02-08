@@ -51,6 +51,16 @@ build {
     ]
   }
 
+  provisioner "shell" {
+    inline = [
+      "echo '==== CONFIGURING BLACK ARCH ===='",
+      "curl -O https://blackarch.org/strap.sh",
+      "chmod +x strap.sh",
+      "sudo ./strap.sh",
+      "sudo pacman -Syu --noconfirm --needed"
+    ]
+  }
+
   provisioner "file" {
     destination = "/tmp"
     source      = "scripts/resizerootfs"
