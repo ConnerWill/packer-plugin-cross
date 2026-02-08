@@ -40,17 +40,17 @@ source "cross" "arch" {
 build {
   sources = ["source.cross.arch"]
 
-  provisioner "shell" {
-    inline = [
-      "mv /etc/resolv.conf /etc/resolv.conf.bk",
-      "echo 'nameserver 8.8.8.8' > /etc/resolv.conf",
-      "pacman-key --init",
-      "pacman-key --populate archlinuxarm",
-      "pacman -Sy --noconfirm --needed",
-      "pacman -S parted --noconfirm --needed",
-      "sed -i 's/mmcblk0/mmcblk1/g' /etc/fstab"
-    ]
-  }
+  # provisioner "shell" {
+  #   inline = [
+  #     "mv /etc/resolv.conf /etc/resolv.conf.bk",
+  #     "echo 'nameserver 8.8.8.8' > /etc/resolv.conf",
+  #     "pacman-key --init",
+  #     "pacman-key --populate archlinuxarm",
+  #     "pacman -Sy --noconfirm --needed",
+  #     "pacman -S parted --noconfirm --needed",
+  #     "sed -i 's/mmcblk0/mmcblk1/g' /etc/fstab"
+  #   ]
+  # }
 
   provisioner "file" {
     destination = "/tmp"
