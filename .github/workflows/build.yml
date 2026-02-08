@@ -87,6 +87,7 @@ jobs:
           # - raspberry-pi-4/ubuntu_server_20.04_arm64.pkr.hcl
           - raspberry-pi-4/archlinuxarm.pkr.hcl
           - raspberry-pi-4/archlinuxarm-CUSTOM.pkr.hcl
+          # - raspberry-pi-4/blackarchlinuxarm.pkr.hcl
           - raspberry-pi-4/openwrt_24.10.0.pkr.hcl
           # - rock-4b/debos-radxa.pkr.hcl
           # - wandboard/archlinuxarm.pkr.hcl

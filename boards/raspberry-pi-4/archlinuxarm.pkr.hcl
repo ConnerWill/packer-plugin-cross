@@ -18,7 +18,7 @@ source "cross" "arch" {
     filesystem   = "vfat"
     mountpoint   = "/boot"
     name         = "boot"
-    size         = "256M"
+    size         = "512M"
     start_sector = "2048"
     type         = "c"
   }
