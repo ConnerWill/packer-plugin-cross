@@ -126,9 +126,11 @@ jobs:
 
       - name: Build image
         run: |
+          set -e
           # Run the packer build. We assume that it outputs an image file named "output.img"
           PACKER_BINARY="$(which packer)"
-          sudo PACKER_LOG=1 ${PACKER_BINARY} build -machine-readable boards/${{ matrix.boards }} | tee packer.log
+          # \| tee packer.log
+          sudo PACKER_LOG=1 ${PACKER_BINARY} build -machine-readable "boards/${{ matrix.boards }}" || exit 1
 
       - name: Extract built image name
         id: extract_image
