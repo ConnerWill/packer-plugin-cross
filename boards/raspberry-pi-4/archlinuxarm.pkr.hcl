@@ -64,8 +64,7 @@ build {
       "if [[ -e /etc/resolv.conf ]]; then mv /etc/resolv.conf /etc/resolv.conf.bk ; echo 'nameserver 8.8.8.8' > /etc/resolv.conf; fi",
       "pacman-key --init",
       "pacman-key --populate archlinuxarm",
-      "pacman -Sy --noconfirm --needed",
-      "pacman -S parted --noconfirm --needed",
+      "pacman -Sy --disable-sandbox --noconfirm --needed parted ",
     ]
   }
 
